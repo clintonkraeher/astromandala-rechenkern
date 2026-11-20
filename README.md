@@ -126,6 +126,10 @@ docker run --rm --read-only -p 127.0.0.1:8790:8000 -e KERN_TOKEN=<mindestens 16 
 dieses Repository. Der Kern ist fuer ein internes Netz gedacht und braucht keine oeffentliche
 Adresse.
 
+Ein Beispiel fuer den Betrieb als Compose-Dienst steht in
+[compose.beispiel.yaml](compose.beispiel.yaml). Die CI veroeffentlicht jede Fassung von `main` als
+`ghcr.io/clintonkraeher/astromandala-rechenkern:sha-<commit>`.
+
 Ohne Docker: Python ab 3.12, `pip install -r requirements.txt`, die beiden Dateien nach
 `<ordner>/leb/` legen, `LIBEPHEMERIS_DATA_DIR=<ordner>` setzen, dann
 `python -m unittest discover -s tests` oder `python kern.py` (lauscht auf 127.0.0.1:8790).

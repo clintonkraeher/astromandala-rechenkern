@@ -1,0 +1,19 @@
+# Beispiel fuer den Betrieb des Rechenkerns, etwa als Docker-Compose-Dienst in Coolify.
+# Keine oeffentliche Adresse: Der Kern ist nur im internen Netz erreichbar. Den Token erzeugt die
+# Plattform (hier Coolify mit SERVICE_PASSWORD_64_KERN); er steht nie in diesem Repository.
+services:
+  rechenkern:
+    # Immer eine feste Fassung: der Commit steht im Tag und unter GET /quelle.
+    image: ghcr.io/clintonkraeher/astromandala-rechenkern:sha-<commit>
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - KERN_TOKEN=${SERVICE_PASSWORD_64_KERN}
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 384m
+    cpus: 1.0
