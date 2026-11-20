@@ -1,0 +1,13 @@
+# Fest versioniert, damit jede gebaute Fassung nachvollziehbar bleibt. Lizenzen: LIZENZEN-DRITTER.md.
+libephemeris==3.2.2
+gunicorn==26.2.0
+# Abhaengigkeiten von libephemeris
+certifi==2026.10.23
+click==8.5.1
+jplephem==2.24
+numpy==2.5.5
+pyerfa==2.0.1.5
+sgp4==2.27
+skyfield==1.55
+skyfield-data==7.0.0
+zstandard==0.25.0

@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  image:
+    name: Bauen, pruefen, veroeffentlichen
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      PUBLISH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v4
+
+      # Gebaut wird genau der oeffentliche Stand; der Commit steht im Image und unter /quelle.
+      - name: Image bauen
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          build-args: COMMIT=${{ github.sha }}
+          tags: rechenkern:pruefung
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Die Tests laufen im fertigen Image, ohne Netz und mit schreibgeschuetztem Dateisystem,
+      # also so, wie der Kern spaeter laeuft.
+      - name: Tests im Image
+        run: docker run --rm --network none --read-only --tmpfs /tmp rechenkern:pruefung python -m unittest discover -s tests -v
+
+      - name: Start und /quelle pruefen
+        run: |
+          docker run -d --name kern --network none --read-only -e KERN_TOKEN=ci-kein-echtes-geheimnis rechenkern:pruefung
+          for versuch in $(seq 1 20); do
+            docker exec kern python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8000/quelle', timeout=3).read().decode())" > quelle.json 2>/dev/null && break
+            sleep 1
+          done
+          cat quelle.json
+          grep -q "\"commit\": \"${{ github.sha }}\"" quelle.json
+          docker rm -f kern
+
+      - name: An ghcr.io anmelden
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Image veroeffentlichen
+        if: env.PUBLISH == 'true'
+        run: |
+          for tag in latest sha-${{ github.sha }}; do
+            docker tag rechenkern:pruefung "$IMAGE:$tag"
+            docker push "$IMAGE:$tag"
+          done

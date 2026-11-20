@@ -1,0 +1,9 @@
+*
+!requirements.txt
+!kern.py
+!LICENSE
+!LIZENZEN-DRITTER.md
+!README.md
+!tests/
+!tests/test_kern.py
+!tests/referenz.json
