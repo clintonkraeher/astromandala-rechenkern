@@ -5,6 +5,7 @@
 import io
 import json
 import math
+import os
 import sys
 import threading
 import unittest
@@ -15,6 +16,7 @@ import kern
 from kern import Kern, abstand, swe
 
 TOKEN = 'nur-fuer-tests-kein-geheimnis'
+COMMIT = os.environ.get('KERN_COMMIT', 'unbekannt')
 REFERENZ = json.loads((Path(__file__).parent / 'referenz.json').read_text())
 NAMEN = [name for name, _ in kern.KOERPER]
 
@@ -114,7 +116,7 @@ class HimmelTests(unittest.TestCase):
         self.assertEqual(kopf['Cache-Control'], 'no-store')
         koerper = body['himmel'][0]['koerper']
         self.assertEqual([k['name'] for k in koerper], NAMEN)
-        self.assertEqual(body['rechenstand'], {'kern': kern.VERSION, 'commit': 'unbekannt',
+        self.assertEqual(body['rechenstand'], {'kern': kern.VERSION, 'commit': COMMIT,
                                                'bibliothek': 'libephemeris ' + swe.__version__,
                                                'tierkreis': 'tropisch'})
         self.assertEqual(NAMEN[:10], ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn',
