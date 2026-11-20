@@ -145,13 +145,20 @@ def staende(jd):
     return liste
 
 
+def rechenstand():
+    """Womit gerechnet wurde. Steht an jeder Antwort, damit der Aufrufer es mit ablegen kann."""
+    return {'kern': VERSION, 'commit': os.environ.get('KERN_COMMIT', 'unbekannt'),
+            'bibliothek': 'libephemeris ' + swe.__version__, 'tierkreis': 'tropisch'}
+
+
 def himmel(daten):
     zeiten = daten.get('zeitpunkte')
     if not isinstance(zeiten, list) or not 1 <= len(zeiten) <= HOECHSTENS_ZEITPUNKTE:
         raise Problem('Bitte 1 bis %d Zeitpunkte angeben.' % HOECHSTENS_ZEITPUNKTE)
     tage = [(wert, zeitpunkt(wert)) for wert in zeiten]
     with SCHLOSS:
-        return {'himmel': [{'zeitpunkt': wert, 'koerper': staende(jd)} for wert, jd in tage]}
+        return {'himmel': [{'zeitpunkt': wert, 'koerper': staende(jd)} for wert, jd in tage],
+                'rechenstand': rechenstand()}
 
 
 def radix(daten):
@@ -173,7 +180,8 @@ def radix(daten):
         raise Problem('Die Berechnung hat kein gueltiges Ergebnis geliefert.', 500, 'rechenfehler')
     return {'zeitpunkt': daten['zeitpunkt'], 'koerper': koerper, 'haeusersystem': system,
             'haeuser': [round(x % 360, 7) for x in spitzen],
-            'aszendent': round(achsen[0] % 360, 7), 'mc': round(achsen[1] % 360, 7)}
+            'aszendent': round(achsen[0] % 360, 7), 'mc': round(achsen[1] % 360, 7),
+            'rechenstand': rechenstand()}
 
 
 def quelle():

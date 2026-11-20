@@ -114,6 +114,9 @@ class HimmelTests(unittest.TestCase):
         self.assertEqual(kopf['Cache-Control'], 'no-store')
         koerper = body['himmel'][0]['koerper']
         self.assertEqual([k['name'] for k in koerper], NAMEN)
+        self.assertEqual(body['rechenstand'], {'kern': kern.VERSION, 'commit': 'unbekannt',
+                                               'bibliothek': 'libephemeris ' + swe.__version__,
+                                               'tierkreis': 'tropisch'})
         self.assertEqual(NAMEN[:10], ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn',
                                       'Uranus', 'Neptune', 'Pluto'])
         for k in koerper:
@@ -181,6 +184,7 @@ class RadixTests(unittest.TestCase):
         status, body, _ = ruf('/radix', {'zeitpunkt': '1978-07-14T05:40:00Z', 'lat': 47.0707, 'lon': 15.4395})
         self.assertEqual(status, 200)
         self.assertEqual(body['haeusersystem'], 'placidus')
+        self.assertEqual(body['rechenstand']['kern'], kern.VERSION)
         self.assertEqual([k['name'] for k in body['koerper']], NAMEN)
         self.assertEqual(int(body['aszendent'] // 30), 4)   # Loewe
         self.assertEqual(int(body['mc'] // 30), 1)          # Stier

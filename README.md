@@ -50,7 +50,9 @@ POST /himmel
 
 {"himmel": [{"zeitpunkt": "2026-11-20T12:00:00Z",
              "koerper": [{"name": "Sun", "longitude": 238.2643541, "latitude": 0.0000683,
-                          "speed": 1.0111034}, ...]}, ...]}
+                          "speed": 1.0111034}, ...]}, ...],
+ "rechenstand": {"kern": "1.0.0", "commit": "...", "bibliothek": "libephemeris 3.2.2",
+                 "tierkreis": "tropisch"}}
 ```
 
 ```
@@ -58,7 +60,7 @@ POST /radix
 {"zeitpunkt": "1978-07-14T05:40:00Z", "lat": 47.0707, "lon": 15.4395}
 
 {"zeitpunkt": "1978-07-14T05:40:00Z", "koerper": [...], "haeusersystem": "placidus",
- "haeuser": [137.2696, ...], "aszendent": 137.2696, "mc": 34.4431}
+ "haeuser": [137.2696, ...], "aszendent": 137.2696, "mc": 34.4431, "rechenstand": {...}}
 ```
 
 `koerper` enthaelt immer in dieser Reihenfolge: `Sun`, `Moon`, `Mercury`, `Venus`, `Mars`,
